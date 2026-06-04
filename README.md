@@ -1,26 +1,26 @@
 # Sistem Manajemen Distribusi Roti (SMDR)
 
-A bread consignment distribution management system for Indonesian small businesses. MVP is a single-tenant web application: Sales record field visits from a smartphone, and the Owner monitors master data, stock, sales, returns, payments, dashboard, and reports.
+Aplikasi web untuk mengelola distribusi roti dengan sistem titip jual antara pemilik usaha, sales, dan warung. MVP single-tenant: Sales mencatat kunjungan dari smartphone, Owner memantau data master, stok titipan, penjualan, retur, pembayaran, dashboard, dan laporan secara real-time.
 
 ## Tech Stack
 
 - **Frontend:** Angular 18 SPA
-- **Backend:** Go with Gin
+- **Backend:** Go dengan Gin
 - **API:** REST
 - **Database:** PostgreSQL 16
-- **ORM:** SQL-first with sqlc + pgx
-- **Auth:** JWT in httpOnly secure cookie, bcrypt passwords
-- **Deploy:** Docker Compose on Ubuntu VPS
+- **Akses Database:** SQL-first dengan sqlc + pgx, tanpa ORM
+- **Auth:** JWT dalam httpOnly secure cookie, bcrypt password hashing
+- **Deploy:** Docker Compose di VPS Ubuntu
 
 ## Quick Start
 
 ```bash
 cp .env.example .env
-# Edit .env with your secrets
+# Edit .env dengan secret Anda
 docker compose up -d
 ```
 
-The Owner account is seeded from `.env` on first run. Login at `http://localhost:4200`.
+Akun Owner di-seed dari `.env` saat pertama kali dijalankan. Login di `http://localhost:4200`.
 
 ## Development
 
@@ -37,11 +37,11 @@ cd backend
 go run ./cmd/server
 ```
 
-### Database Migrations
+### Migrasi Database
 ```bash
 docker compose exec postgres psql -U smdr -d smdr -f /migrations/001_init.sql
 ```
 
-## Domain Context
+## Konteks Domain
 
-See `CONTEXT.md` for the domain glossary and `docs/PRD.md` for the full product requirements.
+Lihat `CONTEXT.md` untuk glosarium domain dan `docs/PRD.md` untuk dokumen kebutuhan produk lengkap.

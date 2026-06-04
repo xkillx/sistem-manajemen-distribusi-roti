@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smdr-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-smdr}
+      POSTGRES_USER: ${DB_USER:-smdr}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-smdr}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-smdr} -d ${DB_NAME:-smdr}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smdr-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-smdr}
+      DB_USER: ${DB_USER:-smdr}
+      DB_PASSWORD: ${DB_PASSWORD:-smdr}
+      JWT_SECRET: ${JWT_SECRET}
+      OWNER_USERNAME: ${OWNER_USERNAME:-owner}
+      OWNER_PASSWORD: ${OWNER_PASSWORD}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smdr-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+
+volumes:
+  pgdata:
